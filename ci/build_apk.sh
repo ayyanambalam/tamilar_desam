@@ -30,8 +30,8 @@ if [[ -z "${GOOGLE_SERVICES_JSON_BASE64:-}" ]]; then
   exit 1
 fi
 mkdir -p "$WORK_DIR/android/app"
-echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > "$WORK_DIR/android/app/google-services.json"
 
+printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | tr -d '\n\r ' | base64 --decode --ignore-garbage > "$WORK_DIR/android/app/google-services.json"
 echo "Fetching packages..."
 flutter pub get
 
