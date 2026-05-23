@@ -4,7 +4,16 @@ set -euo pipefail
 echo "== Tamilar Desam: CI build APK =="
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WORK_DIR="$ROOT_DIR/.ci_flutter_project"
+WORK_DIR="$WORK_DIR" python3 -c '
+import os, re, base64, pathlib
+s = os.environ.get("GOOGLE_SERVICES_JSON_BASE64","")
+s = re.sub(r"\s+", "", s)
+s += "=" * (-len(s) % 4)
+data = base64.b64decode(s, validate=False)
+path = pathlib.Path(os.environ["WORK_DIR"]) / "android" / "app" / "google-services.json"
+path.write_bytes(data)
+print("Wrote", path)
+'
 OUT_DIR="$ROOT_DIR/build-output"
 
 rm -rf "$WORK_DIR" "$OUT_DIR"
